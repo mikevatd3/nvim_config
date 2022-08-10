@@ -38,10 +38,10 @@ local fn = vim.fn
 
 -- ensure that packer is installed
 
-local install_path = fn.stdpath('data')..'/site/pack/packer/opt/packer.nvim'
+local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
     execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
-    execute 'packadd packer .nvim'
+    execute 'packadd packer.nvim'
 end
 
 vim.cmd('packadd packer.nvim')
@@ -58,13 +58,18 @@ packer.startup(function()
     local use = use
     -- add plugins here like
     -- use 'neovim/nvim-lspconfig'
+    use 'wbthomason/packer.nvim'
     use 'lukas-reineke/indent-blankline.nvim'
     use 'nvim-treesitter/nvim-treesitter'
-    use 'nvim-orgmode/orgmode'
     use 'neovim/nvim-lspconfig'
+    use 'anott03/nvim-lspinstall'
     use 'tpope/vim-fugitive'
-    use 'morhetz/gruvbox'
     use 'nvim-telescope/telescope.nvim'
+    use 'tjdevries/colorbuddy.nvim'
+    use 'bkegley/gloombuddy'
+    use 'mfussenegger/nvim-dap'
+    use 'sheerun/vim-polyglot'
+ 
     use {
       'nvim-lualine/lualine.nvim',
       requires = { 'kyazdani42/nvim-web-devicons', opt = true }
@@ -75,3 +80,5 @@ packer.startup(function()
 require('lualine').setup {
     options = { theme = 'dracula' }
 }
+
+local lspconfig = require('lspconfig')
