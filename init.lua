@@ -1,6 +1,5 @@
 require("michael")
 
-
 -- BASICS
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 4
@@ -85,7 +84,22 @@ require('lualine').setup {
     options = { theme = 'dracula' }
 }
 
+local dap = require('dap')
+dap.configurations.python = {
+  {
+    type = 'python';
+    request = 'launch';
+    name = "Launch file";
+    program = "${file}";
+    pythonPath = function()
+      return '/usr/bin/python'
+    end;
+  },
+}
+
 local lspconfig = require 'lspconfig'
 local coq = require 'coq'
 
 lspconfig.pyright.setup(coq.lsp_ensure_capabilities())
+
+vim.cmd('COQnow -s')
