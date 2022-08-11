@@ -1,5 +1,6 @@
 require("michael")
 
+
 -- BASICS
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 4
@@ -69,6 +70,9 @@ packer.startup(function()
     use 'bkegley/gloombuddy'
     use 'mfussenegger/nvim-dap'
     use 'sheerun/vim-polyglot'
+    use 'ms-jpq/coq.artifacts'
+    use 'ms-jpq/coq.thirdparty'
+    use 'ms-jpq/coq_nvim'
  
     use {
       'nvim-lualine/lualine.nvim',
@@ -81,4 +85,7 @@ require('lualine').setup {
     options = { theme = 'dracula' }
 }
 
-local lspconfig = require('lspconfig')
+local lspconfig = require 'lspconfig'
+local coq = require 'coq'
+
+lspconfig.pyright.setup(coq.lsp_ensure_capabilities())
