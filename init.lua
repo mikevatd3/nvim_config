@@ -68,10 +68,13 @@ packer.startup(function()
     use 'tjdevries/colorbuddy.nvim'
     use 'bkegley/gloombuddy'
     use 'mfussenegger/nvim-dap'
-    use 'sheerun/vim-polyglot'
+    use 'nvim-telescope/telescope-dap.nvim'
+    use 'mfussenegger/nvim-dap-python'
     use 'ms-jpq/coq.artifacts'
     use 'ms-jpq/coq.thirdparty'
     use 'ms-jpq/coq_nvim'
+    use 'Mofiqul/dracula.nvim'
+    use 'sainnhe/everforest'
  
     use {
       'nvim-lualine/lualine.nvim',
@@ -81,25 +84,23 @@ packer.startup(function()
 )
 
 require('lualine').setup {
-    options = { theme = 'dracula' }
+--    options = { theme = 'everforest' }
 }
 
-local dap = require('dap')
-dap.configurations.python = {
-  {
-    type = 'python';
-    request = 'launch';
-    name = "Launch file";
-    program = "${file}";
-    pythonPath = function()
-      return '/usr/bin/python'
-    end;
-  },
-}
+require('dap-python').setup('/usr/bin/python3')
 
 local lspconfig = require 'lspconfig'
 local coq = require 'coq'
 
 lspconfig.pyright.setup(coq.lsp_ensure_capabilities())
 
+vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
 vim.cmd('COQnow -s')
+vim.cmd[[
+    if has('termguicolors')
+      set termguicolors
+    endif
+    set background=dark
+    let g:everforest_background = 'soft'
+    let g:everforest_better_performance = 1
+    colorscheme everforest]]
