@@ -1,5 +1,3 @@
-require("michael")
-
 -- BASICS
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 4
@@ -22,13 +20,14 @@ local opts = { noremap = true }
 keymap('n', '<leader>w', ':w<CR>', opts)
 keymap('n', '<leader>q', ':wq<CR>', opts)
 keymap('n', '<leader>b', ':q!<CR>', opts)
-keymap('n', '<c-j>', '<c-w>j', opts)
+keymap('n', '<c-j>', '<c-w><c-w>', opts)
 keymap('n', '<c-h>', '<c-w>h', opts)
 keymap('n', '<c-k>', '<c-w>k', opts)
 keymap('n', '<c-l>', '<c-w>l', opts)
 keymap('n', '<C-s>v', ':vsplit .<CR>', opts)
 keymap('n', '<C-s>h', ':split .<CR>', opts)
-keymap('n', '<leader>m', ':make<CR>', opts)
+keymap('n', '<leader>m', ':w<CR>:make<CR>', opts)
+keymap('n', '<leader>h', ':noh<CR>', opts)
 
 -- PACKER
 
@@ -93,6 +92,7 @@ local lspconfig = require 'lspconfig'
 local coq = require 'coq'
 
 lspconfig.pyright.setup(coq.lsp_ensure_capabilities())
+lspconfig.tsserver.setup(coq.lsp_ensure_capabilities())
 
 vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
 vim.cmd('COQnow -s')
@@ -103,4 +103,6 @@ vim.cmd[[
     set background=dark
     let g:everforest_background = 'soft'
     let g:everforest_better_performance = 1
-    colorscheme everforest]]
+    colorscheme everforest
+]]
+
