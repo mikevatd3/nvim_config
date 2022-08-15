@@ -18,7 +18,7 @@ vim.g.mapleader = ' '
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true }
 keymap('n', '<leader>w', ':w<CR>', opts)
-keymap('n', '<leader>q', ':wq<CR>', opts)
+keymap('n', '<leader>q', ':w<CR>:Explore<CR>', opts)
 keymap('n', '<leader>b', ':q!<CR>', opts)
 keymap('n', '<c-j>', '<c-w><c-w>', opts)
 keymap('n', '<c-h>', '<c-w>h', opts)
