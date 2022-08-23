@@ -64,6 +64,7 @@ packer.startup(function()
     local use = use
     -- add plugins here like
     -- use 'neovim/nvim-lspconfig'
+    use 'ixru/nvim-markdown'
     use 'nvim-lua/plenary.nvim'
     use 'wbthomason/packer.nvim'
     use 'lukas-reineke/indent-blankline.nvim'
@@ -101,7 +102,6 @@ require('lualine').setup {
 }
 
 require('dap-python').setup('/usr/bin/python3')
-
 
 local lspconfig = require 'lspconfig'
 local coq = require 'coq'
