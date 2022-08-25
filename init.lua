@@ -31,8 +31,6 @@ keymap('n', '<leader>m', ':w<CR>:make<CR>', opts)
 keymap('n', '<leader>h', ':noh<CR>', opts)
 keymap('n', '<c-f>', ':Telescope find_files<CR>', opts)
 
-goto_preview = require('goto-preview')
-
 keymap('n', '<leader>gpd', ':lua require("goto-preview").goto_preview_definition()<CR>', opts)
 keymap('n', '<leader>gpt', ':lua require("goto-preview").goto_preview_type_definition()<CR>', opts)
 
@@ -75,12 +73,11 @@ packer.startup(function()
     use 'tjdevries/colorbuddy.nvim'
     use 'bkegley/gloombuddy'
     use 'mfussenegger/nvim-dap'
-    use 'nvim-telescope/telescope-dap.nvim'
     use 'mfussenegger/nvim-dap-python'
+    use 'nvim-telescope/telescope-dap.nvim'
     use 'ms-jpq/coq.artifacts'
     use 'ms-jpq/coq.thirdparty'
     use 'ms-jpq/coq_nvim'
-    use 'Mofiqul/dracula.nvim'
     use 'rmagatti/goto-preview'
     use 'sainnhe/everforest'
     use 'mivicker/sqid'
@@ -89,7 +86,7 @@ packer.startup(function()
     -- or                            , branch = '0.1.x',
       requires = { {'nvim-lua/plenary.nvim'} }
     }
- 
+
     use {
       'nvim-lualine/lualine.nvim',
       requires = { 'kyazdani42/nvim-web-devicons', opt = true }
