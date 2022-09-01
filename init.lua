@@ -8,6 +8,7 @@ vim.opt.wrap = false
 vim.opt.scrolloff = 6
 vim.opt.sidescrolloff = 4
 vim.opt.hidden = true
+vim.opt.laststatus = 3
 
 -- KEYMAPS
 -- Template:
@@ -125,6 +126,7 @@ require("nvim-treesitter.configs").setup({
   },
 })
 
+
 require('goto-preview').setup {
   width = 120; -- Width of the floating window
   height = 15; -- Height of the floating window
@@ -140,34 +142,35 @@ require('goto-preview').setup {
   force_close = true, -- passed into vim.api.nvim_win_close's second argument. See :h nvim_win_close
   bufhidden = "wipe", -- the bufhidden option to set on the floating window. See :h bufhidden
 }
+
 local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 
 lspconfig.sumneko_lua.setup({
-on_attach = custom_attach,
-settings = {
-    Lua = {
-    runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-        version = "LuaJIT",
-        -- Setup your lua path
-        path = runtime_path,
+    on_attach = custom_attach,
+    settings = {
+        Lua = {
+        runtime = {
+            -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+            version = "LuaJIT",
+            -- Setup your lua path
+            path = runtime_path,
+        },
+        diagnostics = {
+            -- Get the language server to recognize the `vim` global
+            globals = { "vim" },
+        },
+        workspace = {
+            -- Make the server aware of Neovim runtime files
+            library = vim.api.nvim_get_runtime_file("", true),
+        },
+        -- Do not send telemetry data containing a randomized but unique identifier
+        telemetry = {
+            enable = false,
+        },
+        },
     },
-    diagnostics = {
-        -- Get the language server to recognize the `vim` global
-        globals = { "vim" },
-    },
-    workspace = {
-        -- Make the server aware of Neovim runtime files
-        library = vim.api.nvim_get_runtime_file("", true),
-    },
-    -- Do not send telemetry data containing a randomized but unique identifier
-    telemetry = {
-        enable = false,
-    },
-    },
-},
 })
 
 require"sqid".setup({})
