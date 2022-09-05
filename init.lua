@@ -36,7 +36,6 @@ keymap('n', '<leader>gpd', ':lua require("goto-preview").goto_preview_definition
 keymap('n', '<leader>gpt', ':lua require("goto-preview").goto_preview_type_definition()<CR>', opts)
 
 -- PACKER
-
 local vim = vim
 local execute = vim.api.nvim_command
 local fn = vim.fn
@@ -63,6 +62,16 @@ packer.startup(function()
     local use = use
     -- add plugins here like
     -- use 'neovim/nvim-lspconfig'
+
+    -- completion
+    use 'hrsh7th/nvim-cmp'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'hrsh7th/cmp-buffer'
+    use 'hrsh7th/cmp-nvim-lua'
+    use 'hrsh7th/cmp-path'
+    use 'hrsh7th/cmp-cmdline'
+    use 'L3MON4D3/LuaSnip'
+
     use 'ixru/nvim-markdown'
     use 'nvim-lua/plenary.nvim'
     use 'wbthomason/packer.nvim'
@@ -76,9 +85,6 @@ packer.startup(function()
     use 'mfussenegger/nvim-dap'
     use 'mfussenegger/nvim-dap-python'
     use 'nvim-telescope/telescope-dap.nvim'
-    use 'ms-jpq/coq.artifacts'
-    use 'ms-jpq/coq.thirdparty'
-    use 'ms-jpq/coq_nvim'
     use 'rmagatti/goto-preview'
     use 'sainnhe/everforest'
     use 'mivicker/sqid'
@@ -99,13 +105,140 @@ require('lualine').setup {
 --    options = { theme = 'everforest' }
 }
 
+local cmp = require "cmp"
+
+cmp.setup {
+  mapping = {
+    ["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
+    ["<C-p>"] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
+    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+    ["<C-e>"] = cmp.mapping.abort(),
+    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<C-y>"] = cmp.mapping.confirm({ select = true }),
+--    ["<C-y>"] = cmp.mapping(
+--     cmp.mapping.confirm {
+--       behavior = cmp.ConfirmBehavior.Insert,
+--       select = true,
+--     },
+--     { "i", "c" }
+--   ),
+--
+--   ["<C-space>"] = cmp.mapping {
+--     i = cmp.mapping.complete(),
+--     c = function(
+--       _ --[[fallback]]
+--     )
+--       if cmp.visible() then
+--         if not cmp.confirm { select = true } then
+--           return
+--         end
+--       else
+--         cmp.complete()
+--       end
+--     end,
+--   },
+
+     -- ["<tab>"] = false,
+     ["<tab>"] = cmp.config.disable,
+
+    -- ["<tab>"] = cmp.mapping {
+    --   i = cmp.config.disable,
+    --   c = function(fallback)
+    --     fallback()
+    --   end,
+    -- },
+
+    -- Testing
+    ["<c-q>"] = cmp.mapping.confirm {
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true,
+    },
+
+    -- If you want tab completion :'(
+    --  First you have to just promise to read `:help ins-completion`.
+    --
+    -- ["<Tab>"] = function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_next_item()
+    --   else
+    --     fallback()
+    --   end
+    -- end,
+    -- ["<S-Tab>"] = function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_prev_item()
+    --   else
+    --     fallback()
+    --   end
+    -- end,
+  },
+
+  -- Youtube:
+  --    the order of your sources matter (by default). That gives them priority
+  --    you can configure:
+  --        keyword_length
+  --        priority
+  --        max_item_count
+  --        (more?)
+  sources = {
+    -- Youtube: Could enable this only for lua, but nvim_lua handles that already.
+    { name = "nvim_lua" },
+
+    { name = "nvim_lsp" },
+    { name = "path" },
+    { name = "luasnip" },
+    { name = "buffer", keyword_length = 5 },
+  },
+
+  sorting = {
+    -- TODO: Would be cool to add stuff like "See variable names before method names" in rust, or something like that.
+    comparators = {
+      cmp.config.compare.offset,
+      cmp.config.compare.exact,
+      cmp.config.compare.score,
+
+      -- copied from cmp-under, but I don't think I need the plugin for this.
+      -- I might add some more of my own.
+      function(entry1, entry2)
+        local _, entry1_under = entry1.completion_item.label:find "^_+"
+        local _, entry2_under = entry2.completion_item.label:find "^_+"
+        entry1_under = entry1_under or 0
+        entry2_under = entry2_under or 0
+        if entry1_under > entry2_under then
+          return false
+        elseif entry1_under < entry2_under then
+          return true
+        end
+      end,
+
+      cmp.config.compare.kind,
+      cmp.config.compare.sort_text,
+      cmp.config.compare.length,
+      cmp.config.compare.order,
+    },
+  },
+
+  -- Youtube: mention that you need a separate snippets plugin
+  snippet = {
+    expand = function(args)
+      require("luasnip").lsp_expand(args.body)
+    end,
+  },
+
+  experimental = {
+    -- I like the new menu better! Nice work hrsh7th
+    native_menu = false,
+
+    -- Let's play with this for a day or two
+    ghost_text = true,
+  },
+}
+
+
 require('dap-python').setup('/usr/bin/python3')
 
 local lspconfig = require 'lspconfig'
-local coq = require 'coq'
-
-lspconfig.pyright.setup(coq.lsp_ensure_capabilities())
-lspconfig.tsserver.setup(coq.lsp_ensure_capabilities())
 
 vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
 vim.cmd[[
@@ -125,7 +258,6 @@ require("nvim-treesitter.configs").setup({
     additional_vim_regex_highlighting = { "markdown" },
   },
 })
-
 
 require('goto-preview').setup {
   width = 120; -- Width of the floating window
@@ -147,6 +279,10 @@ local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 
+
+lspconfig.pyright.setup{}
+
+lspconfig.tsserver.setup{}
 lspconfig.sumneko_lua.setup({
     on_attach = custom_attach,
     settings = {

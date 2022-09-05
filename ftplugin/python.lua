@@ -1,4 +1,3 @@
-vim.cmd('COQnow -s')
 vim.cmd[[:setl makeprg=python3\ %]]
 
 -- Pyhton specific keymaps
