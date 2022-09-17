@@ -31,6 +31,7 @@ keymap('n', '<C-s>h', ':split .<CR>', opts)
 keymap('n', '<leader>m', ':w<CR>:make<CR>', opts)
 keymap('n', '<leader>h', ':noh<CR>', opts)
 keymap('n', '<c-f>', ':Telescope find_files<CR>', opts)
+keymap('v', '<leader>p', '\"_dP', opts)
 
 keymap('n', '<leader>gpd', ':lua require("goto-preview").goto_preview_definition()<CR>', opts)
 keymap('n', '<leader>gpt', ':lua require("goto-preview").goto_preview_type_definition()<CR>', opts)
@@ -74,6 +75,7 @@ packer.startup(function()
 
     use 'ixru/nvim-markdown'
     use 'nvim-lua/plenary.nvim'
+    use 'epwalsh/obsidian.nvim'
     use 'wbthomason/packer.nvim'
     use 'lukas-reineke/indent-blankline.nvim'
     use 'nvim-treesitter/nvim-treesitter'
@@ -86,14 +88,17 @@ packer.startup(function()
     use 'mfussenegger/nvim-dap-python'
     use 'nvim-telescope/telescope-dap.nvim'
     use 'rmagatti/goto-preview'
-    use 'sainnhe/everforest'
+    use {
+        'sainnhe/everforest',
+        commit = 'd209db750b1ec371fe911fcfd4a2b2b4b6ecc8c4'
+    }
     use 'mivicker/sqid'
     use {
       'nvim-telescope/telescope.nvim', tag = '0.1.0',
     -- or                            , branch = '0.1.x',
       requires = { {'nvim-lua/plenary.nvim'} }
     }
-
+    use 'kyazdani42/nvim-web-devicons'
     use {
       'nvim-lualine/lualine.nvim',
       requires = { 'kyazdani42/nvim-web-devicons', opt = true }
@@ -235,6 +240,12 @@ cmp.setup {
   },
 }
 
+require('obsidian').setup({
+    dir = '~/language/',
+    completion = {
+        nvim_cmp = true,
+    }
+})
 
 require('dap-python').setup('/usr/bin/python3')
 
@@ -278,7 +289,6 @@ require('goto-preview').setup {
 local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
-
 
 lspconfig.pyright.setup{}
 
