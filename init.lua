@@ -75,7 +75,6 @@ packer.startup(function()
 
     use 'ixru/nvim-markdown'
     use 'nvim-lua/plenary.nvim'
-    use 'epwalsh/obsidian.nvim'
     use 'wbthomason/packer.nvim'
     use 'lukas-reineke/indent-blankline.nvim'
     use 'nvim-treesitter/nvim-treesitter'
@@ -239,13 +238,6 @@ cmp.setup {
     ghost_text = true,
   },
 }
-
-require('obsidian').setup({
-    dir = '~/language/',
-    completion = {
-        nvim_cmp = true,
-    }
-})
 
 require('dap-python').setup('/usr/bin/python3')
 
