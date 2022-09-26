@@ -12,7 +12,6 @@ local function readAll(file)
     local f = assert(io.open(file, "rb"))
     local content = f:read("*a")
     f:close()
-    print("This didn't fail")
     return content
 end
 

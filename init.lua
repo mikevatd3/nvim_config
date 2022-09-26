@@ -13,7 +13,7 @@ vim.opt.laststatus = 3
 -- KEYMAPS
 -- Template:
 -- vim.api.nvim_set_keymap({mode}, {keymap}, {mapped to}, {options})
-
+vim.g.python3_host_prog = '~/.config/nvim/env/bin/python3.10'
 vim.g.mapleader = ' '
 
 local keymap = vim.api.nvim_set_keymap
