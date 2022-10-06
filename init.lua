@@ -254,6 +254,8 @@ vim.cmd[[
     colorscheme everforest
 ]]
 
+require('dap-python').setup('~/.config/nvim/env/bin/python')
+
 require("nvim-treesitter.configs").setup({
   ensure_installed = { "markdown", "markdown_inline", ... },
   highlight = {
