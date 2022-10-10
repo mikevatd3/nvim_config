@@ -79,6 +79,8 @@ packer.startup(function()
     use 'lukas-reineke/indent-blankline.nvim'
     use 'nvim-treesitter/nvim-treesitter'
     use 'neovim/nvim-lspconfig'
+    use 'williamboman/mason.nvim'
+    use 'williamboman/mason-lspconfig.nvim'
     use 'anott03/nvim-lspinstall'
     use 'tpope/vim-fugitive'
     use 'tjdevries/colorbuddy.nvim'
@@ -87,6 +89,7 @@ packer.startup(function()
     use 'mfussenegger/nvim-dap-python'
     use 'nvim-telescope/telescope-dap.nvim'
     use 'rmagatti/goto-preview'
+    use 'simrat39/rust-tools.nvim'
     use {
         'sainnhe/everforest',
         commit = 'd209db750b1ec371fe911fcfd4a2b2b4b6ecc8c4'
@@ -105,6 +108,7 @@ packer.startup(function()
     end
 )
 
+require("mason").setup()
 require('lualine').setup {
 --    options = { theme = 'everforest' }
 }
@@ -284,8 +288,9 @@ local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 
-lspconfig.pyright.setup{}
+local configs = require("lspconfig.configs")
 
+lspconfig.pyright.setup{}
 lspconfig.tsserver.setup{}
 lspconfig.sumneko_lua.setup({
     on_attach = custom_attach,
@@ -313,4 +318,5 @@ lspconfig.sumneko_lua.setup({
     },
 })
 
+require('rust-tools').setup({})
 require"sqid".setup({})
