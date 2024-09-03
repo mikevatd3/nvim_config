@@ -9,110 +9,107 @@ vim.opt.scrolloff = 6
 vim.opt.sidescrolloff = 4
 vim.opt.hidden = true
 vim.opt.laststatus = 3
+vim.opt.clipboard = 'unnamedplus'
 
 -- KEYMAPS
 -- Template:
 -- vim.api.nvim_set_keymap({mode}, {keymap}, {mapped to}, {options})
 vim.g.python3_host_prog = '~/.config/nvim/env/bin/python3.10'
 vim.g.mapleader = ' '
-
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true }
 keymap('n', '<leader>w', ':w<CR>', opts)
 keymap('n', '<leader>wq', ':wq<CR>', opts)
 keymap('n', '<leader>q', ':w<CR>:Explore<CR>', opts)
 keymap('n', '<leader>b', ':q!<CR>', opts)
+keymap('n', '<leader>o', 'o<ESC>', opts)
+keymap('n', '<leader>O', 'O<ESC>', opts)
 keymap('n', '<c-j>', '<c-w><c-w>', opts)
 keymap('n', '<c-h>', '<c-w>h', opts)
-keymap('n', '<c-k>', '<c-w>k', opts)
 keymap('n', '<c-l>', '<c-w>l', opts)
 keymap('n', '<C-s>v', ':vsplit .<CR>', opts)
 keymap('n', '<C-s>h', ':split .<CR>', opts)
 keymap('n', '<leader>m', ':w<CR>:make<CR>', opts)
 keymap('n', '<leader>h', ':noh<CR>', opts)
 keymap('n', '<c-f>', ':Telescope find_files<CR>', opts)
-keymap('v', '<leader>p', '\"_dP', opts)
-
+keymap('n', '<c-c>', ':Telescope live_grep<CR>', opts)
 keymap('n', '<leader>gpd', ':lua require("goto-preview").goto_preview_definition()<CR>', opts)
 keymap('n', '<leader>gpt', ':lua require("goto-preview").goto_preview_type_definition()<CR>', opts)
+keymap('n', '<leader>v', '"*p', opts)
+keymap('v', '<leader>p', '\"_dP', opts)
+keymap('v', '<leader>c', ':w !xclip -selection clipboard<CR>', opts)
+keymap('n', '<leader><leader>s', '<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>', opts)
+keymap('v', '<leader>oe', ':s/\\(.*\\)/', opts)
+keymap('n', '\\n', ':bnext<CR>', opts)
+keymap('n', '\\p', ':bprevious<CR>', opts)
 
--- PACKER
-local vim = vim
-local execute = vim.api.nvim_command
-local fn = vim.fn
+require("config.lazy")
 
--- ensure that packer is installed
 
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
-    execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
-    execute 'packadd packer.nvim'
+-- Set up the language server
+
+local runtime_path = vim.split(package.path, ";")
+table.insert(runtime_path, "lua/?.lua")
+table.insert(runtime_path, "lua/?/init.lua")
+
+require("mason").setup() -- again, an installer tool
+
+local lspconfig = require 'lspconfig'
+lspconfig.pyright.setup{} -- For python
+
+
+local function jl_on_attach(client, bufnr)
+  -- Example keybindings for LSP functions
+  local buf_set_keymap = vim.api.nvim_buf_set_keymap
+  local opts = { noremap=true, silent=true }
+
+  buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap(bufnr, 'n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap(bufnr, 'n', '<leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
 end
 
-vim.cmd('packadd packer.nvim')
 
-local packer = require('packer')
-local util = require('packer.util')
-
-packer.init({
-    package_root = util.join_paths(vim.fn.stdpath('data'), 'site', 'pack')
-})
-
--- startup and add configure plugins
-packer.startup(function()
-    local use = use
-    -- add plugins here like
-    -- use 'neovim/nvim-lspconfig'
-
-    -- completion
-    use 'hrsh7th/nvim-cmp'
-    use 'hrsh7th/cmp-nvim-lsp'
-    use 'hrsh7th/cmp-buffer'
-    use 'hrsh7th/cmp-nvim-lua'
-    use 'hrsh7th/cmp-path'
-    use 'hrsh7th/cmp-cmdline'
-    use 'L3MON4D3/LuaSnip'
-
-    use 'ixru/nvim-markdown'
-    use 'nvim-lua/plenary.nvim'
-    use 'wbthomason/packer.nvim'
-    use 'lukas-reineke/indent-blankline.nvim'
-    use 'nvim-treesitter/nvim-treesitter'
-    use 'neovim/nvim-lspconfig'
-    use 'williamboman/mason.nvim'
-    use 'williamboman/mason-lspconfig.nvim'
-    use 'anott03/nvim-lspinstall'
-    use 'tpope/vim-fugitive'
-    use 'tjdevries/colorbuddy.nvim'
-    use 'bkegley/gloombuddy'
-    use 'mfussenegger/nvim-dap'
-    use 'mfussenegger/nvim-dap-python'
-    use 'nvim-telescope/telescope-dap.nvim'
-    use 'rmagatti/goto-preview'
-    use 'simrat39/rust-tools.nvim'
-    use {
-        'sainnhe/everforest',
-        commit = 'd209db750b1ec371fe911fcfd4a2b2b4b6ecc8c4'
+-- Julia apparently requires a ton of extra work to set up properly
+lspconfig.julials.setup{
+    cmd = {"julia", "--project=@nvim_lsp", "-e", [[
+        using LanguageServer; using Pkg; import SymbolServer;
+        env_path = dirname(Pkg.Types.Context().env.project_file);
+        server = LanguageServer.LanguageServerInstance(stdin, stdout, env_path);
+        server.runlinter = true;
+        run(server);
+    ]]},
+    on_attach = jl_on_attach,
+    flags = {
+        debounce_text_changes = 150,
     }
-    use 'mivicker/sqid'
-    use {
-      'nvim-telescope/telescope.nvim', tag = '0.1.0',
-    -- or                            , branch = '0.1.x',
-      requires = { {'nvim-lua/plenary.nvim'} }
-    }
-    use 'kyazdani42/nvim-web-devicons'
-    use {
-      'nvim-lualine/lualine.nvim',
-      requires = { 'kyazdani42/nvim-web-devicons', opt = true }
-    }
-    end
-)
-
-require("mason").setup()
-require('lualine').setup {
---    options = { theme = 'everforest' }
 }
 
+
+vim.lsp.set_log_level("debug") -- This is for julia for some reason
+
+lspconfig.lua_ls.setup({ -- For lua
+    on_attach = custom_attach,
+    settings = {
+        Lua = {
+            runtime = {
+                version = "LuaJIT",
+                path = runtime_path,
+            },
+            diagnostics = {
+                globals = { "vim" },
+            },
+            workspace = {
+                library = vim.api.nvim_get_runtime_file("", true),
+            },
+            telemetry = {
+                enable = false,
+            },
+        },
+    },
+})
+
+-- Completion set up
 local cmp = require "cmp"
 
 cmp.setup {
@@ -124,75 +121,14 @@ cmp.setup {
     ["<C-e>"] = cmp.mapping.abort(),
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-y>"] = cmp.mapping.confirm({ select = true }),
---    ["<C-y>"] = cmp.mapping(
---     cmp.mapping.confirm {
---       behavior = cmp.ConfirmBehavior.Insert,
---       select = true,
---     },
---     { "i", "c" }
---   ),
---
---   ["<C-space>"] = cmp.mapping {
---     i = cmp.mapping.complete(),
---     c = function(
---       _ --[[fallback]]
---     )
---       if cmp.visible() then
---         if not cmp.confirm { select = true } then
---           return
---         end
---       else
---         cmp.complete()
---       end
---     end,
---   },
-
-     -- ["<tab>"] = false,
-     ["<tab>"] = cmp.config.disable,
-
-    -- ["<tab>"] = cmp.mapping {
-    --   i = cmp.config.disable,
-    --   c = function(fallback)
-    --     fallback()
-    --   end,
-    -- },
-
-    -- Testing
+    ["<tab>"] = cmp.config.disable,
     ["<c-q>"] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-
-    -- If you want tab completion :'(
-    --  First you have to just promise to read `:help ins-completion`.
-    --
-    -- ["<Tab>"] = function(fallback)
-    --   if cmp.visible() then
-    --     cmp.select_next_item()
-    --   else
-    --     fallback()
-    --   end
-    -- end,
-    -- ["<S-Tab>"] = function(fallback)
-    --   if cmp.visible() then
-    --     cmp.select_prev_item()
-    --   else
-    --     fallback()
-    --   end
-    -- end,
   },
-
-  -- Youtube:
-  --    the order of your sources matter (by default). That gives them priority
-  --    you can configure:
-  --        keyword_length
-  --        priority
-  --        max_item_count
-  --        (more?)
   sources = {
-    -- Youtube: Could enable this only for lua, but nvim_lua handles that already.
     { name = "nvim_lua" },
-
     { name = "nvim_lsp" },
     { name = "path" },
     { name = "luasnip" },
@@ -200,14 +136,11 @@ cmp.setup {
   },
 
   sorting = {
-    -- TODO: Would be cool to add stuff like "See variable names before method names" in rust, or something like that.
     comparators = {
       cmp.config.compare.offset,
       cmp.config.compare.exact,
       cmp.config.compare.score,
 
-      -- copied from cmp-under, but I don't think I need the plugin for this.
-      -- I might add some more of my own.
       function(entry1, entry2)
         local _, entry1_under = entry1.completion_item.label:find "^_+"
         local _, entry2_under = entry2.completion_item.label:find "^_+"
@@ -227,7 +160,6 @@ cmp.setup {
     },
   },
 
-  -- Youtube: mention that you need a separate snippets plugin
   snippet = {
     expand = function(args)
       require("luasnip").lsp_expand(args.body)
@@ -235,88 +167,91 @@ cmp.setup {
   },
 
   experimental = {
-    -- I like the new menu better! Nice work hrsh7th
     native_menu = false,
-
-    -- Let's play with this for a day or two
     ghost_text = true,
   },
 }
 
-require('dap-python').setup('/usr/bin/python3')
+cmp.setup.filetype({ "sql" }, {
+    sources = {
+        { name = "vim-dadbod-completion" },
+        { name = "buffer" },
+    }
+})
 
-local lspconfig = require 'lspconfig'
+-- Snippets set up
+
+local ls = require("luasnip")
+local types = require("luasnip.util.types")
+
+ls.config.set_config {
+    history = true,
+    updateevents = "TextChanged,TextChangedI",
+    enable_autosnippets = true,
+    ext_opts = {
+        [types.choiceNode] = {
+            active = {
+                virt_text = { { "<-", "Error" } },
+            },
+        },
+    },
+}
+
+vim.keymap.set({ "i", "s" }, "<C-k>", function()
+    if ls.expand_or_jumpable() then
+        ls.expand_or_jump()
+    end
+end, { silent = true })
+
+
+--[[
+vim.keymap.set({ "i", "s" }, "<c-K>", function()
+    if ls.jumpable(-1) then
+        ls.jump(-1)
+    end
+end, { silent = true })
+]]
+
+
+vim.keymap.set({ "i", "s" }, "<C-l>", function()
+    if ls.choice_active() then
+        ls.change_choice(1)
+    end
+end)
+
+-- Go to preview setup
+require('goto-preview').setup {
+    width = 120; -- Width of the floating window
+    height = 15; -- Height of the floating window
+    border = {"↖", "─" ,"┐", "│", "┘", "─", "└", "│"}; -- Border characters of the floating window
+    default_mappings = false; -- Bind default mappings
+    debug = false; -- Print debug information
+    opacity = nil; -- 0-100 opacity level of the floating window where 100 is fully transparent.
+    resizing_mappings = false; -- Binds arrow keys to resizing the floating window.
+    post_open_hook = nil; -- A function taking two arguments, a buffer and a window to be ran as a hook.
+    -- These two configs can also be passed down to the goto-preview definition and implementation calls for one off "peak" functionality.
+    focus_on_open = true; -- Focus the floating window when opening it.
+    dismiss_on_move = false; -- Dismiss the floating window when moving the cursor.
+    force_close = true, -- passed into vim.api.nvim_win_close's second argument. See :h nvim_win_close
+    bufhidden = "wipe", -- the bufhidden option to set on the floating window. See :h bufhidden
+}
+
+-- Appearance
+
+require('lualine').setup({})
 
 vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
+vim.opt.background = "dark"
 vim.cmd[[
     if has('termguicolors')
       set termguicolors
     endif
-    set background=dark
-    let g:everforest_background = 'soft'
-    let g:everforest_better_performance = 1
-    colorscheme everforest
+    colorscheme oxocarbon
 ]]
 
-require('dap-python').setup('~/.config/nvim/env/bin/python')
 
-require("nvim-treesitter.configs").setup({
-  ensure_installed = { "markdown", "markdown_inline", ... },
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = { "markdown" },
-  },
-})
+-- Hand-made crap
 
-require('goto-preview').setup {
-  width = 120; -- Width of the floating window
-  height = 15; -- Height of the floating window
-  border = {"↖", "─" ,"┐", "│", "┘", "─", "└", "│"}; -- Border characters of the floating window
-  default_mappings = false; -- Bind default mappings
-  debug = false; -- Print debug information
-  opacity = nil; -- 0-100 opacity level of the floating window where 100 is fully transparent.
-  resizing_mappings = false; -- Binds arrow keys to resizing the floating window.
-  post_open_hook = nil; -- A function taking two arguments, a buffer and a window to be ran as a hook.
-  -- These two configs can also be passed down to the goto-preview definition and implementation calls for one off "peak" functionality.
-  focus_on_open = true; -- Focus the floating window when opening it.
-  dismiss_on_move = false; -- Dismiss the floating window when moving the cursor.
-  force_close = true, -- passed into vim.api.nvim_win_close's second argument. See :h nvim_win_close
-  bufhidden = "wipe", -- the bufhidden option to set on the floating window. See :h bufhidden
-}
-
-local runtime_path = vim.split(package.path, ";")
-table.insert(runtime_path, "lua/?.lua")
-table.insert(runtime_path, "lua/?/init.lua")
-
-local configs = require("lspconfig.configs")
-
-lspconfig.pyright.setup{}
-lspconfig.tsserver.setup{}
-lspconfig.sumneko_lua.setup({
-    on_attach = custom_attach,
-    settings = {
-        Lua = {
-        runtime = {
-            -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-            version = "LuaJIT",
-            -- Setup your lua path
-            path = runtime_path,
-        },
-        diagnostics = {
-            -- Get the language server to recognize the `vim` global
-            globals = { "vim" },
-        },
-        workspace = {
-            -- Make the server aware of Neovim runtime files
-            library = vim.api.nvim_get_runtime_file("", true),
-        },
-        -- Do not send telemetry data containing a randomized but unique identifier
-        telemetry = {
-            enable = false,
-        },
-        },
-    },
-})
-
-require('rust-tools').setup({})
 require"sqid".setup({})
+require("trystero")
+
