@@ -1,4 +1,6 @@
 require("luasnip.session.snippet_collection").clear_snippets("all")
+require("luasnip.session.snippet_collection").clear_snippets("python")
+require("luasnip.session.snippet_collection").clear_snippets("sql")
 
 local ls = require "luasnip"
 local extras = require "luasnip.extras"
@@ -32,7 +34,10 @@ ls.add_snippets("python", {
     s("logger", {
         t({'logger = logging.getLogger(config["app"]["name"])'})
     }),
+    s("ti", {t("# type: ignore")}),
     s("pl", {i(1), t({".rename(columns={", "" , "}).assign(", "", ")[[", "", "]]"})}),
+    s("al", fmta([["<col>": "__<alias>",]], {col=i(1), alias=rep(1)})),
+    s("cl", fmta([[<col> = lambda df: clean_<alias>(df["__<alias>"]),]], {col=i(1), alias=rep(1)})),
 })
 
 
@@ -107,14 +112,38 @@ order by count desc;<finish>]], {
         gc_rep=rep(1),
         finish=i(0)
     })),
-    s("cte", fmta([[
+    s("cte", c(1, {
+        fmta([[
 with <alias> as (
-    <finish>
+    <cte>
 )
+select * 
+from <aliass>;<finish>
     ]], {
         alias=i(1),
-        finish=i(0)
-    })),
+        cte=i(2),
+        finish=i(0),
+        aliass=rep(1),
+    }),
+        fmta([[
+with <alias> as (
+    <cte> 
+)
+select * 
+from <next>
+    join <aliass>
+        on <nextt>.<j1> = <aliass>.<j2>;<finish>
+    ]], {
+        alias=i(1),
+        cte=i(2),
+        aliass=rep(1),
+        finish=i(0),
+        next=i(3),
+        nextt=rep(3),
+        j1=i(4),
+        j2=i(5),
+    }),
+})),
 })
 
 

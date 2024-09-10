@@ -37,6 +37,7 @@ keymap('n', '<leader>gpd', ':lua require("goto-preview").goto_preview_definition
 keymap('n', '<leader>gpt', ':lua require("goto-preview").goto_preview_type_definition()<CR>', opts)
 keymap('n', '<leader>v', '"*p', opts)
 keymap('v', '<leader>p', '\"_dP', opts)
+keymap('v', '<leader>w', ':w !wc -w<CR>', opts)
 keymap('v', '<leader>c', ':w !xclip -selection clipboard<CR>', opts)
 keymap('n', '<leader><leader>s', '<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>', opts)
 keymap('v', '<leader>oe', ':s/\\(.*\\)/', opts)
