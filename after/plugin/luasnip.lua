@@ -38,6 +38,46 @@ ls.add_snippets("python", {
     s("pl", {i(1), t({".rename(columns={", "" , "}).assign(", "", ")[[", "", "]]"})}),
     s("al", fmta([["<col>": "__<alias>",]], {col=i(1), alias=rep(1)})),
     s("cl", fmta([[<col> = lambda df: clean_<alias>(df["__<alias>"]),]], {col=i(1), alias=rep(1)})),
+    s("census", fmta([[
+@censusify
+def <func_name>(geo: Geography):
+    return <var_exp>
+
+
+@censusify
+def <func_moe_name>_moe(geo: Geography):
+    return <var_moe_exp>
+    ]], {
+        func_name=i(1),
+        var_exp=i(2),
+        func_moe_name=rep(1),
+        var_moe_exp=rep(2),
+    })),
+    s("script", fmta([[
+def main():
+    pass
+
+
+if __name__ == "__main__":
+    main()]], {})),
+    s("open", fmta([[
+with open("<filename>", "<open_types>") as f:
+    <predicates>
+    ]], {
+        filename=i(1),
+        open_types=c(2, {
+            t("w"),
+            t("r"),
+            t("rb"),
+            t("rw"),
+            t("a"),
+        }),
+        predicates=c(3, {
+            t("data = f.read()"),
+            t("obj = json.load(f)"),
+            sn(1, {t("json.dump("), i(1), t(", f, indent=4)")})
+        })
+    })),
 })
 
 
@@ -76,7 +116,7 @@ local html_snips = {
             '{% endblock %}',
         })
     }),
-    s("dv", { t("{{ "), i(1), t(" }}") }),
+    s("var", { t("{{ "), i(1), t(" }}") }),
     s("for", {
         t("{% for "), i(1), t(" in "), rep(1), t({"s %}",""}), i(2), t({"","{% endfor %}"})
     }),
@@ -109,7 +149,7 @@ group by <gc_rep>
 order by count desc;<finish>]], {
         gc=i(2),
         table=i(1),
-        gc_rep=rep(1),
+        gc_rep=rep(2),
         finish=i(0)
     })),
     s("cte", c(1, {

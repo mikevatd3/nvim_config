@@ -43,6 +43,8 @@ keymap('n', '<leader><leader>s', '<cmd>source ~/.config/nvim/after/plugin/luasni
 keymap('v', '<leader>oe', ':s/\\(.*\\)/', opts)
 keymap('n', '\\n', ':bnext<CR>', opts)
 keymap('n', '\\p', ':bprevious<CR>', opts)
+keymap('v', '<leader>qp', '!python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.stdin.read()))<CR>', opts)
+keymap('n', '<leader>t', ':r !tspmdt "<C-r>0"<CR>', opts)
 
 require("config.lazy")
 
@@ -57,7 +59,7 @@ require("mason").setup() -- again, an installer tool
 
 local lspconfig = require 'lspconfig'
 lspconfig.pyright.setup{} -- For python
-
+lspconfig.ts_ls.setup{} -- For js
 
 local function jl_on_attach(client, bufnr)
   -- Example keybindings for LSP functions
@@ -250,6 +252,8 @@ vim.cmd[[
     colorscheme oxocarbon
 ]]
 
+-- Set the color column at 80 characters
+vim.opt.colorcolumn = "73,80"
 
 -- Hand-made crap
 
