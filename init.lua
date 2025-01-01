@@ -75,13 +75,16 @@ end
 
 -- Julia apparently requires a ton of extra work to set up properly
 lspconfig.julials.setup{
-    cmd = {"julia", "--project=@nvim_lsp", "-e", [[
-        using LanguageServer; using Pkg; import SymbolServer;
+    cmd = {
+        "julia",
+        "--project=@nvim_lsp",
+        "-e",
+        [[using LanguageServer; using Pkg; import SymbolServer;
         env_path = dirname(Pkg.Types.Context().env.project_file);
         server = LanguageServer.LanguageServerInstance(stdin, stdout, env_path);
         server.runlinter = true;
-        run(server);
-    ]]},
+        run(server);]]
+    },
     on_attach = jl_on_attach,
     flags = {
         debounce_text_changes = 150,

@@ -78,6 +78,30 @@ with open("<filename>", "<open_types>") as f:
             sn(1, {t("json.dump("), i(1), t(", f, indent=4)")})
         })
     })),
+    s('flask', fmta([[
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+    ]], {})),
+    s('route', fmta([[
+@app.route("/<route_name>")
+def <func_name>():
+    return render_template("<template_name>.html")
+]], {
+        route_name=i(1),
+        func_name=i(2),
+        template_name=rep(2),
+    })),
 })
 
 
@@ -92,7 +116,10 @@ local html_snips = {
             '    <meta http-equiv="X-UA-Compatible" content="ie=edge">',
             '    <title>{% block title %}Sophons{% endblock %}</title>',
             '    {% block extra_css %}{% endblock %}',
-            '    {% block extra_js %}{% endblock %}',
+            '    {% block extra_js %}',
+            '    <script src="https://unpkg.com/htmx.org@2.0.3"></script>',
+            '    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>',
+            '    {% endblock %}',
             '  </head>',
             '  <body>',
             '    <main>',
@@ -116,6 +143,7 @@ local html_snips = {
             '{% endblock %}',
         })
     }),
+    s("blk", { t("{% "), i(1), t(" %}") }),
     s("var", { t("{{ "), i(1), t(" }}") }),
     s("for", {
         t("{% for "), i(1), t(" in "), rep(1), t({"s %}",""}), i(2), t({"","{% endfor %}"})
