@@ -4,7 +4,6 @@ local opts = { noremap = true }
 
 local last_args = nil
 
-
 local function setarg()
     local args = vim.fn.input("!python % " )
     last_args = args
@@ -25,6 +24,7 @@ local function replay()
     local cmd = string.format("!python %s %s", vim.fn.expand("%:p"), args)
     vim.cmd(cmd)
 end
+
 
 keymap('n', '<leader>m', ':w<CR>:! python %<CR>', opts)
 

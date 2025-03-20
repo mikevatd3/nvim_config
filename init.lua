@@ -44,6 +44,7 @@ keymap('v', '<leader>oe', ':s/\\(.*\\)/', opts)
 keymap('n', '\\n', ':bnext<CR>', opts)
 keymap('n', '\\p', ':bprevious<CR>', opts)
 keymap('v', '<leader>qp', '!python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.stdin.read()))<CR>', opts)
+keymap('v', '<leader>sn', ':s/\\%V\\([a-z]\\)\\([A-Z]\\)/\\1_\\l\\2/g<CR>gvu', opts)
 keymap('n', '<leader>t', ':r !tspmdt "<C-r>0"<CR>', opts)
 
 require("config.lazy")
