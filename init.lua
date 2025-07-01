@@ -243,24 +243,38 @@ require('goto-preview').setup {
     bufhidden = "wipe", -- the bufhidden option to set on the floating window. See :h bufhidden
 }
 
+
+-- For formatting SQL in dbui
+
+local null_ls = require("null-ls")
+
+null_ls.setup({
+  sources = {
+    null_ls.builtins.formatting.sqlfluff.with({
+      -- point at your base-env sqlfluff if it isn’t in $PATH:
+      command    = vim.fn.expand("~/.py_system_env/bin/sqlfluff fix"),
+      extra_args = {"--dialect", "postgres", "--quiet"},
+      -- increase timeout to 10 seconds:
+      timeout    = 10000,
+      -- or prefer a local project install:
+      prefer_local = true,
+    }),
+  },
+})
+
 -- Appearance
 
-require('lualine').setup({})
+-- require('lualine').setup({})
 
 vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
-vim.opt.background = "dark"
-vim.cmd[[
-    if has('termguicolors')
-      set termguicolors
-    endif
-    colorscheme oxocarbon
-]]
-
+vim.cmd[[colorscheme everforest]]
+vim.cmd[[set shellcmdflag=-ic]]
 -- Set the color column at 80 characters
 vim.opt.colorcolumn = "73,80"
 
+
 -- Hand-made crap
 
-require"sqid".setup({})
-require("trystero")
+-- require"sqid".setup({})
+-- require("trystero")
 
