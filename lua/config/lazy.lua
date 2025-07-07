@@ -35,6 +35,9 @@ require("lazy").setup({
   -- Language server configurations
   { "neovim/nvim-lspconfig" },
 
+  -- Logging for some plugins
+  {"NTBBloodbath/logging.nvim"},
+
   -- Completion plugins
   { "hrsh7th/nvim-cmp" },
   { "hrsh7th/cmp-nvim-lsp" },
@@ -66,7 +69,11 @@ require("lazy").setup({
   -- { "yuratomo/w3m.vim" },
 
   -- Go To Preview for previewing function definitions
-  { "rmagatti/goto-preview", opts = {} },
+  {
+      "rmagatti/goto-preview",
+      dependencies = { "rmagatti/logger.nvim" },
+      opts = {}
+  },
 
   -- Appearance-related plugins
   { "tjdevries/colorbuddy.nvim" },

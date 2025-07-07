@@ -212,6 +212,36 @@ from <next>
         j2=i(5),
     }),
 })),
+s("hex", fmta([[
+WITH hexes AS (
+    SELECT ROW_NUMBER() OVER() AS hexid, *
+    FROM (
+        SELECT (st_hexagongrid(0.005, <geocol>)).*
+        FROM <table>
+    ) raw
+)
+<finish>
+]], {
+    table=i(1),
+    geocol=i(2),
+    finish=i(0),
+})),
+    s(
+        "zscore",
+        c(1,
+            fmta(
+                "(<cola>::NUMERIC - AVG(<colb>) OVER ()) / NULLIF((STDDEV(<colc>) OVER ()), 0) AS zscore<finish>",
+                { cola = i(1), colb = rep(1), colc = rep(1), finish = i(0) }
+            ),
+            fmta(
+                [[(
+    (<cola>::NUMERIC - AVG(<colb>) OVER (PARTITION BY <part>)) 
+    / NULLIF((STDDEV(<colc>) OVER (PARTITION BY <partb>)), 0)
+) AS zscore<finish>]],
+                { cola = i(1), colb = rep(1), colc = rep(1), parta = i(2), partb = rep(2), finish = i(0) }
+            )
+        )
+    ),
 })
 
 

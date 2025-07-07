@@ -71,42 +71,8 @@ vim.opt.colorcolumn = "73,80"
 local lspconfig = require 'lspconfig'
 lspconfig.pyright.setup{} -- For python
 lspconfig.ts_ls.setup{} -- For js
-
-local function jl_on_attach(client, bufnr)
-  -- Example keybindings for LSP functions
-  local buf_set_keymap = vim.api.nvim_buf_set_keymap
-  local opts = { noremap=true, silent=true }
-
-  buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap(bufnr, 'n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap(bufnr, 'n', '<leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
-end
-
-
--- Julia apparently requires a ton of extra work to set up properly
-lspconfig.julials.setup{
-    cmd = {
-        "julia",
-        "--project=@nvim_lsp",
-        "-e",
-        [[using LanguageServer; using Pkg; import SymbolServer;
-        env_path = dirname(Pkg.Types.Context().env.project_file);
-        server = LanguageServer.LanguageServerInstance(stdin, stdout, env_path);
-        server.runlinter = true;
-        run(server);]]
-    },
-    on_attach = jl_on_attach,
-    flags = {
-        debounce_text_changes = 150,
-    }
-}
-
-
-vim.lsp.set_log_level("debug") -- This is for julia for some reason
-
+lspconfig.julials.setup{}
 lspconfig.lua_ls.setup({ -- For lua
-    on_attach = custom_attach,
     settings = {
         Lua = {
             runtime = {
@@ -125,6 +91,8 @@ lspconfig.lua_ls.setup({ -- For lua
         },
     },
 })
+lspconfig.rust_analyzer.setup{}
+
 
 -- Completion set up
 local cmp = require "cmp"
@@ -257,6 +225,14 @@ require('goto-preview').setup {
 -- For formatting SQL in dbui
 
 local null_ls = require("null-ls")
+vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
+vim.opt.background = "dark"
+vim.cmd[[
+    if has('termguicolors')
+      set termguicolors
+    endif
+    colorscheme everforest
+]]
 
 null_ls.setup({
   sources = {
