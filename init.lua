@@ -58,6 +58,16 @@ table.insert(runtime_path, "lua/?/init.lua")
 
 require("mason").setup() -- again, an installer tool
 
+-- Appearance
+
+vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
+vim.cmd[[colorscheme everforest]]
+vim.cmd[[set shellcmdflag=-ic]]
+
+-- Set the color column at 80 characters
+vim.opt.colorcolumn = "73,80"
+
+
 local lspconfig = require 'lspconfig'
 lspconfig.pyright.setup{} -- For python
 lspconfig.ts_ls.setup{} -- For js
@@ -262,19 +272,4 @@ null_ls.setup({
   },
 })
 
--- Appearance
-
--- require('lualine').setup({})
-
-vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
-vim.cmd[[colorscheme everforest]]
-vim.cmd[[set shellcmdflag=-ic]]
--- Set the color column at 80 characters
-vim.opt.colorcolumn = "73,80"
-
-
--- Hand-made crap
-
--- require"sqid".setup({})
--- require("trystero")
 
