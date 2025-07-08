@@ -238,7 +238,7 @@ null_ls.setup({
   sources = {
     null_ls.builtins.formatting.sqlfluff.with({
       -- point at your base-env sqlfluff if it isn’t in $PATH:
-      command    = vim.fn.expand("~/.py_system_env/bin/sqlfluff fix"),
+      command    = vim.fn.expand("sqlfluff fix"),
       extra_args = {"--dialect", "postgres", "--quiet"},
       -- increase timeout to 10 seconds:
       timeout    = 10000,
