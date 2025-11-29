@@ -26,7 +26,7 @@ local function replay()
 end
 
 
-keymap('n', '<leader>m', ':w<CR>:! python %<CR>', opts)
+keymap('n', '<leader>m', ':w<CR>:bo 15split | terminal uv run python %<CR>', opts)
 
 vim.keymap.set('n', '<leader>M', replay, opts)
 vim.keymap.set('n', '<leader><leader>M', setarg, opts)

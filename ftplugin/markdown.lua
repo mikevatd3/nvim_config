@@ -7,6 +7,8 @@ keymap('x', '<leader>sw', ':lua require"sqid".pop_window()<CR>', opts)
 keymap('x', '<leader>saw', ':lua require"sqid".askwayne()<CR>', opts)
 keymap('x', '<leader>slu', ':lua require"sqid".lookupinoed()<CR>', opts)
 keymap('v', '<leader>S', ':MStickIt<CR>', opts)
+
+vim.cmd[[set textwidth=80]]
 vim.cmd[[:setlocal wrap linebreak nolist]]
 vim.cmd[[:let g:vim_markdown_frontmatter = 1]]
 vim.cmd[[:setlocal spell spelllang=en]]

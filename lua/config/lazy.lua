@@ -58,7 +58,7 @@ require("lazy").setup({
   { "nvim-lua/plenary.nvim" },
   {
     "nvim-telescope/telescope.nvim",
-    tag = "0.1.0",
+    tag = "0.1.8",
     dependencies = { "nvim-lua/plenary.nvim" }
   },
 
@@ -87,33 +87,6 @@ require("lazy").setup({
   { "AndrewRadev/linediff.vim" },
 
   -- null-ls for SQLFluff formatting
-  {
-    "jose-elias-alvarez/null-ls.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      local home = os.getenv("HOME")
-      local pyenv_bin = home .. "/.py_system_env/bin"
-      -- make sure Neovim can “see” your env
-      vim.env.PATH = pyenv_bin .. ":" .. vim.env.PATH
-
-      local null_ls = require("null-ls")
-      null_ls.setup({
-        sources = {
-          null_ls.builtins.formatting.sqlfluff.with({
-            extra_args = { "--dialect", "ansi" },
-          }),
-        },
-        on_attach = function(client, bufnr)
-          if client.server_capabilities.documentFormattingProvider then
-            vim.keymap.set("n", "<leader>sf", function()
-              vim.lsp.buf.format({ bufnr = bufnr })
-            end, { buffer = bufnr, silent = true, desc = "Format SQL with SQLFluff" })
-          end
-        end,
-      })
-    end,
-  }
-
   -- Custom plugins
   -- { "mivicker/sqid" },
 

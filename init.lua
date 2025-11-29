@@ -67,12 +67,7 @@ vim.cmd[[set shellcmdflag=-ic]]
 -- Set the color column at 80 characters
 vim.opt.colorcolumn = "73,80"
 
-
-local lspconfig = require 'lspconfig'
-lspconfig.pyright.setup{} -- For python
-lspconfig.ts_ls.setup{} -- For js
-lspconfig.julials.setup{}
-lspconfig.lua_ls.setup({ -- For lua
+vim.lsp.config["lua_ls"] = { -- For lua
     settings = {
         Lua = {
             runtime = {
@@ -90,79 +85,77 @@ lspconfig.lua_ls.setup({ -- For lua
             },
         },
     },
-})
-lspconfig.rust_analyzer.setup{}
-
-
--- Completion set up
-local cmp = require "cmp"
-
-cmp.setup {
-  mapping = {
-    ["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
-    ["<C-p>"] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
-    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-    ["<C-f>"] = cmp.mapping.scroll_docs(4),
-    ["<C-e>"] = cmp.mapping.abort(),
-    ["<C-Space>"] = cmp.mapping.complete(),
-    ["<C-y>"] = cmp.mapping.confirm({ select = true }),
-    ["<tab>"] = cmp.config.disable,
-    ["<c-q>"] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
-  },
-  sources = {
-    { name = "nvim_lua" },
-    { name = "nvim_lsp" },
-    { name = "path" },
-    { name = "luasnip" },
-    { name = "buffer", keyword_length = 5 },
-  },
-
-  sorting = {
-    comparators = {
-      cmp.config.compare.offset,
-      cmp.config.compare.exact,
-      cmp.config.compare.score,
-
-      function(entry1, entry2)
-        local _, entry1_under = entry1.completion_item.label:find "^_+"
-        local _, entry2_under = entry2.completion_item.label:find "^_+"
-        entry1_under = entry1_under or 0
-        entry2_under = entry2_under or 0
-        if entry1_under > entry2_under then
-          return false
-        elseif entry1_under < entry2_under then
-          return true
-        end
-      end,
-
-      cmp.config.compare.kind,
-      cmp.config.compare.sort_text,
-      cmp.config.compare.length,
-      cmp.config.compare.order,
-    },
-  },
-
-  snippet = {
-    expand = function(args)
-      require("luasnip").lsp_expand(args.body)
-    end,
-  },
-
-  experimental = {
-    native_menu = false,
-    ghost_text = true,
-  },
 }
 
-cmp.setup.filetype({ "sql" }, {
-    sources = {
-        { name = "vim-dadbod-completion" },
-        { name = "buffer" },
-    }
-})
+-- Completion set up
+-- local cmp = require "cmp"
+-- 
+-- cmp.setup {
+--   mapping = {
+--     ["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
+--     ["<C-p>"] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
+--     ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+--     ["<C-f>"] = cmp.mapping.scroll_docs(4),
+--     ["<C-e>"] = cmp.mapping.abort(),
+--     ["<C-Space>"] = cmp.mapping.complete(),
+--     ["<C-y>"] = cmp.mapping.confirm({ select = true }),
+--     ["<tab>"] = cmp.config.disable,
+--     ["<c-q>"] = cmp.mapping.confirm {
+--       behavior = cmp.ConfirmBehavior.Replace,
+--       select = true,
+--     },
+--   },
+--   sources = {
+--     { name = "nvim_lua" },
+--     { name = "nvim_lsp" },
+--     { name = "path" },
+--     { name = "luasnip" },
+--     { name = "buffer", keyword_length = 5 },
+--   },
+-- 
+--   sorting = {
+--     comparators = {
+--       cmp.config.compare.offset,
+--       cmp.config.compare.exact,
+--       cmp.config.compare.score,
+-- 
+--       function(entry1, entry2)
+--         local _, entry1_under = entry1.completion_item.label:find "^_+"
+--         local _, entry2_under = entry2.completion_item.label:find "^_+"
+--         entry1_under = entry1_under or 0
+--         entry2_under = entry2_under or 0
+--         if entry1_under > entry2_under then
+--           return false
+--         elseif entry1_under < entry2_under then
+--           return true
+--         end
+--       end,
+-- 
+--       cmp.config.compare.kind,
+--       cmp.config.compare.sort_text,
+--       cmp.config.compare.length,
+--       cmp.config.compare.order,
+--     },
+--   },
+-- 
+--   snippet = {
+--     expand = function(args)
+--       require("luasnip").lsp_expand(args.body)
+--     end,
+--   },
+-- 
+--   experimental = {
+--     native_menu = false,
+--     ghost_text = true,
+--   },
+-- }
+
+-- cmp.setup.filetype({ "sql" }, {
+--     sources = {
+--         { name = "vim-dadbod-completion" },
+--         { name = "buffer" },
+--     }
+-- })
 
 -- Snippets set up
 
@@ -222,9 +215,7 @@ require('goto-preview').setup {
 }
 
 
--- For formatting SQL in dbui
 
-local null_ls = require("null-ls")
 vim.cmd[[let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro']]
 vim.opt.background = "dark"
 vim.cmd[[
@@ -234,18 +225,26 @@ vim.cmd[[
     colorscheme everforest
 ]]
 
-null_ls.setup({
-  sources = {
-    null_ls.builtins.formatting.sqlfluff.with({
-      -- point at your base-env sqlfluff if it isn’t in $PATH:
-      command    = vim.fn.expand("sqlfluff fix"),
-      extra_args = {"--dialect", "postgres", "--quiet"},
-      -- increase timeout to 10 seconds:
-      timeout    = 10000,
-      -- or prefer a local project install:
-      prefer_local = true,
-    }),
-  },
-})
+-- For formatting SQL in dbui
+-- local null_ls = require("null-ls")
+--
+-- null_ls.setup({
+--   sources = {
+--     null_ls.builtins.formatting.sqlfluff.with({
+--       -- point at your base-env sqlfluff if it isn’t in $PATH:
+--       command    = vim.fn.expand("sqlfluff fix"),
+--       extra_args = {"--dialect", "postgres", "--quiet"},
+--       -- increase timeout to 10 seconds:
+--       timeout    = 10000,
+--       -- or prefer a local project install:
+--       prefer_local = true,
+--     }),
+--   },
+-- })
 
 
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
