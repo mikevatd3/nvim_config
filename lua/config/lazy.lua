@@ -65,8 +65,11 @@ require("lazy").setup({
   -- Vim Fugitive for Git
   { "tpope/vim-fugitive" },
 
-  -- Web browsing in Neovim
-  -- { "yuratomo/w3m.vim" },
+  -- For formatting
+  {
+    'stevearc/conform.nvim',
+    opts = {},
+  },
 
   -- Go To Preview for previewing function definitions
   {
@@ -85,13 +88,15 @@ require("lazy").setup({
   },
 
   { "AndrewRadev/linediff.vim" },
+    
+  -- Send lines to a repl
+  { 
+    "jpalardy/vim-slime",
+    init = function()
+      vim.g.slime_target = "kitty"
+    end
+  },
 
-  -- null-ls for SQLFluff formatting
-  -- Custom plugins
-  -- { "mivicker/sqid" },
-
-  -- For if you want to drop this init into its own file.
-  -- { import = "plugins" },
 },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.

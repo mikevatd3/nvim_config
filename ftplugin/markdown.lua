@@ -1,6 +1,40 @@
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true }
 
+vim.lsp.config["harper_ls"] = {
+    settings = {
+        ["harper-ls"] = {
+            userDictPath = "~/.config/nvim/spell/en.utf-8.add",
+            linters = {
+                  SpellCheck = true,
+                  SpelledNumbers = false,
+                  AnA = true,
+                  SentenceCapitalization = true,
+                  UnclosedQuotes = true,
+                  WrongQuotes = false,
+                  LongSentences = true,
+                  RepeatedWords = true,
+                  Spaces = true,
+                  Matcher = true,
+                  CorrectNumberSuffix = true
+            },
+            codeActions = {
+                ForceStable = false
+            },
+            markdown = {
+                IgnoreLinkTitle = true
+            },
+            diagnosticSeverity = "hint",
+            isolateEnglish = false,
+            dialect = "American",
+            maxFileLength = 120000,
+            ignoredLintsPath = "",
+            excludePatterns = {"#+ [A-Za-z ]+"}
+        }
+    }
+}
+vim.lsp.enable("harper_ls")
+
 keymap('x', '<leader>si', ':lua require"sqid".web()<CR>', opts)
 keymap('x', '<leader>sf', ':lua require"sqid".web_to_file()<CR>', opts)
 keymap('x', '<leader>sw', ':lua require"sqid".pop_window()<CR>', opts)
