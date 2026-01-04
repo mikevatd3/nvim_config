@@ -25,8 +25,13 @@ vim.g.maplocalleader = "\\"
 require("lazy").setup({
   spec = {
 
-  -- Treesitter (if needed, uncomment)
+  -- Treesitter
   { "nvim-treesitter/nvim-treesitter" },
+  { "nvim-treesitter/nvim-treesitter-textobjects" },
+  {
+    'Wansmer/treesj',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  },
 
   -- Mason for managing external tools like LSP servers
   { "williamboman/mason.nvim" },
@@ -69,6 +74,12 @@ require("lazy").setup({
   {
     'stevearc/conform.nvim',
     opts = {},
+  },
+
+  -- biblatex plugings for notes and citations
+  {
+      "nvim-telescope/telescope-bibtex.nvim",
+      dependencies = {'nvim-telescope/telescope.nvim'},
   },
 
   -- Go To Preview for previewing function definitions

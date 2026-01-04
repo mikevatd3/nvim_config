@@ -30,8 +30,6 @@ keymap('n', '<C-s>v', ':vsplit .<CR>', opts)
 keymap('n', '<C-s>h', ':split .<CR>', opts)
 keymap('n', '<leader>m', ':w<CR>:make<CR>', opts)
 keymap('n', '<leader>h', ':noh<CR>', opts)
-keymap('n', '<c-g>', ':Telescope find_files<CR>', opts)
-keymap('n', '<c-f>', ':Telescope live_grep<CR>', opts)
 keymap('n', '<leader>gpd', ':lua require("goto-preview").goto_preview_definition()<CR>', opts)
 keymap('n', '<leader>gpt', ':lua require("goto-preview").goto_preview_type_definition()<CR>', opts)
 keymap('n', '<leader>v', '"*p', opts)
@@ -47,6 +45,7 @@ keymap('v', '<leader>sn', ':s/\\%V\\([a-z]\\)\\([A-Z]\\)/\\1_\\l\\2/g<CR>gvu', o
 keymap('n', '<leader>t', ':r !tspmdt "<C-r>0"<CR>', opts)
 keymap('v', 'J', ":m '>+1<CR>gv=gv", opts)
 keymap('v', 'K', ":m '<-2<CR>gv=gv", opts)
+keymap('n', '<leader>j', ":TSJToggle<CR>", opts)
 
 -- This is a silly plugin
 keymap('x', 'R', "!flopper<CR>gv", opts)
@@ -76,6 +75,8 @@ require("plugins.cmp")
 require("plugins.luasnip")
 require("plugins.gotopreview")
 require("plugins.lualine")
+require("plugins.ts")
+require("plugins.treesj")
 
 vim.g.loaded_python3_provider = 0
 
@@ -86,3 +87,4 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find f
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+vim.keymap.set('n', '<leader>fB', ":Telescope bibtex<CR>", {})
