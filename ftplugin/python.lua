@@ -26,7 +26,7 @@ local function replay()
 end
 
 
-keymap('n', '<leader>m', ':w<CR>:bo 15split | terminal uv run python %<CR>', opts)
+keymap('n', '<leader>m', ':w<CR>:bo 12split | terminal uv run python %<CR>', opts)
 
 vim.keymap.set('n', '<leader>M', replay, opts)
 vim.keymap.set('n', '<leader><leader>M', setarg, opts)
@@ -34,6 +34,6 @@ vim.keymap.set('n', '<leader><leader>M', setarg, opts)
 keymap('n', '<leader>t', ':!pytest<CR>', opts)
 keymap('n', '<leader>ds', 'o"""<CR><CR>"""<Esc>ki<Tab>', opts)
 keymap('n', '<leader>Ds', 'O"""<CR><CR>"""<Esc>ki<Tab>', opts)
-keymap('n', '<leader>k', ':w<CR>:!black --line-length 80 --target-version py310 %<CR>', opts)
+keymap('n', '<leader>k', ':w<CR>:bo 8split | terminal black --line-length 80 --target-version py312 %<CR>', opts)
 keymap('v', '<leader>c', ":'<,'>s/^/# <CR>", opts)
 keymap('v', '<leader>uc', ":'<,'>ss/^# /<CR>", opts)

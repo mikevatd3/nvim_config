@@ -236,6 +236,17 @@ WITH hexes AS (
 })
 
 ls.add_snippets("markdown", {
+    s("fm", {
+        t({"---", "title: "}), 
+        i(1), 
+        t({"", "type: "}), 
+        i(2, "blip"), 
+        t({"", "created: "}),
+        f(function() return os.date("%Y-%m-%d") end),
+        t({"", "publish: "}), 
+        i(3, "false"), 
+        t({"", "---"}),
+    }),
     s("article", {
         t({"```biblatex", "@article{"}), 
         i(1, "key"), 

@@ -36,12 +36,20 @@ local opts = { noremap = true }
 -- }
 -- vim.lsp.enable("harper_ls")
 
-keymap('x', '<leader>si', ':lua require"sqid".web()<CR>', opts)
-keymap('x', '<leader>sf', ':lua require"sqid".web_to_file()<CR>', opts)
-keymap('x', '<leader>sw', ':lua require"sqid".pop_window()<CR>', opts)
-keymap('x', '<leader>saw', ':lua require"sqid".askwayne()<CR>', opts)
-keymap('x', '<leader>slu', ':lua require"sqid".lookupinoed()<CR>', opts)
-keymap('v', '<leader>S', ':MStickIt<CR>', opts)
+-- This will add .md to the file search
+vim.opt_local.suffixesadd:append(".md")
+
+-- This will try to find the file first, then create a new markdown file if it doesn't yet exist.
+vim.keymap.set('n', 'gf', function()
+  local ok = pcall(vim.cmd, 'normal! gf')
+  if not ok then
+    local file = vim.fn.expand('<cfile>')
+    if not file:match('%.md$') then
+      file = file .. '.md'
+    end
+    vim.cmd('e ' .. file)
+  end
+end)
 
 vim.cmd[[set textwidth=80]]
 vim.cmd[[:setlocal linebreak nolist]]

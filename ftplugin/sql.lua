@@ -35,3 +35,14 @@ local function execute_with_limit(limit)
 end
 
 vim.keymap.set("v", "<leader>lS", function() execute_with_limit(200) end)
+
+
+local function execute_as_count()
+    vim.cmd('normal! "xy')
+    local sql = vim.fn.getreg('x')
+    local limited = vim.fn.system({'postgrease', 'count-rows'}, sql)
+    limited = limited:gsub("%s+$", "")
+    vim.cmd("DB " .. limited)
+end
+
+vim.keymap.set("v", "<leader>cS", function() execute_as_count() end)

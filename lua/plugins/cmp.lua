@@ -1,6 +1,31 @@
 -- Completion set up
 local cmp = require "cmp"
 
+-- Show files in notes dir on open bracket in markdown
+local filesource = {}
+
+function filesource:is_available()
+    return vim.bo.filetype == 'markdown'
+end
+
+function filesource:get_trigger_characters() return { '(' } end
+
+function filesource:complete(params, callback)
+    local line = params.context.cursor_before_line
+    if not line:match('%($') then
+        return callback({})
+    end
+
+    local items = {}
+    for name in vim.fs.dir('.') do
+        table.insert(items, { label = name .. ')', insertText = name .. ')' })
+    end
+    callback(items)
+end
+
+cmp.register_source('bracket_files', filesource)
+
+
 cmp.setup {
   mapping = {
     ["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
@@ -19,6 +44,7 @@ cmp.setup {
   sources = {
     { name = "nvim_lua" },
     { name = "nvim_lsp" },
+    { name = "bracket_files" },
     { name = "path" },
     { name = "luasnip" },
     { name = "buffer", keyword_length = 5 },
@@ -67,4 +93,6 @@ cmp.setup.filetype({ "sql" }, {
         { name = "buffer" },
     }
 })
+
+
 
