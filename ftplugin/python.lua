@@ -1,3 +1,7 @@
+vim.keymap.set('n', '<leader>k', function()
+  require("conform").format({ bufnr = 0, timeout_ms = 500 })
+end, { buffer = 0 })
+
 -- Python specific keymaps
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true }
@@ -34,6 +38,5 @@ vim.keymap.set('n', '<leader><leader>M', setarg, opts)
 keymap('n', '<leader>t', ':!pytest<CR>', opts)
 keymap('n', '<leader>ds', 'o"""<CR><CR>"""<Esc>ki<Tab>', opts)
 keymap('n', '<leader>Ds', 'O"""<CR><CR>"""<Esc>ki<Tab>', opts)
-keymap('n', '<leader>k', ':w<CR>:bo 8split | terminal black --line-length 80 --target-version py312 %<CR>', opts)
 keymap('v', '<leader>c', ":'<,'>s/^/# <CR>", opts)
 keymap('v', '<leader>uc', ":'<,'>ss/^# /<CR>", opts)

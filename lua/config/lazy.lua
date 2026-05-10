@@ -73,7 +73,9 @@ require("lazy").setup({
   -- For formatting
   {
     'stevearc/conform.nvim',
-    opts = {},
+    config = function()
+      require("plugins.conform")
+    end,
   },
 
   -- biblatex plugings for notes and citations

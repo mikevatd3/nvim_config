@@ -79,6 +79,7 @@ require("plugins.gotopreview")
 require("plugins.lualine")
 require("plugins.ts")
 require("plugins.treesj")
+require("plugins.telescope")
 
 vim.g.loaded_python3_provider = 0
 

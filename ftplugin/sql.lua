@@ -1,5 +1,10 @@
 vim.g.db_ui_execute_on_save = 0
 
+vim.keymap.set('n', '<leader>k', function()
+  require("conform").format({ bufnr = 0, timeout_ms = 1000 })
+end, { buffer = 0 })
+
+
 vim.keymap.set('v', '<leader>sc', function()
     vim.cmd('normal! "xy')
     local sql = vim.fn.getreg('x')

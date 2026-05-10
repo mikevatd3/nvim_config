@@ -2,9 +2,10 @@ require("luasnip.session.snippet_collection").clear_snippets("all")
 require("luasnip.session.snippet_collection").clear_snippets("python")
 require("luasnip.session.snippet_collection").clear_snippets("sql")
 
-local ls = require "luasnip"
-local extras = require "luasnip.extras"
-local fmta = require"luasnip.extras.fmt".fmta
+local ls = require("luasnip")
+local extras = require("luasnip.extras")
+local fmt = require("luasnip.extras.fmt").fmt
+local fmta = require("luasnip.extras.fmt").fmta
 
 local s = ls.snippet
 local sn = ls.snippet_node
@@ -235,96 +236,137 @@ WITH hexes AS (
     ),
 })
 
-ls.add_snippets("markdown", {
-    s("fm", {
-        t({"---", "title: "}), 
-        i(1), 
-        t({"", "type: "}), 
-        i(2, "blip"), 
-        t({"", "created: "}),
-        f(function() return os.date("%Y-%m-%d") end),
-        t({"", "publish: "}), 
-        i(3, "false"), 
-        t({"", "---"}),
-    }),
-    s("article", {
-        t({"```biblatex", "@article{"}), 
-        i(1, "key"), 
-        t({",", "  author = {"}), 
-        i(2), t({"},", "  title = {"}), 
-        i(3), t({"},", "  journal = {"}), 
-        i(4), 
-        t({"},", "  year = {"}), 
-        i(5), 
-        t({"},", "}", "```"}),
-    }),
+ls.add_snippets("bib", {
+  s("@article", fmt([[
+@article{{{},
+  author       = {{{}}},
+  title        = {{{}}},
+  journaltitle = {{{}}},
+  date         = {{{}}},
+  volume       = {{{}}},
+  number       = {{{}}},
+  pages        = {{{}}},
+  doi          = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5), i(6), i(7), i(8), i(9) })),
 
-    s("book", {
-        t({"```biblatex", "@book{"}), 
-        i(1, "key"), 
-        t({",", "  author = {"}), 
-        i(2), 
-        t({"},", "  title = {"}), 
-        i(3), 
-        t({"},", "  publisher = {"}), 
-        i(4), 
-        t({"},", "  year = {"}), 
-        i(5), 
-        t({"},", "}", "```"}),
-    }),
+  s("@book", fmt([[
+@book{{{},
+  author    = {{{}}},
+  title     = {{{}}},
+  date      = {{{}}},
+  publisher = {{{}}},
+  location  = {{{}}},
+  isbn      = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5), i(6), i(7) })),
 
-    s("blog", {
-        t({"```biblatex", "@online{"}), 
-        i(1, "key"), 
-        t({",", "  author = {"}), 
-        i(2), 
-        t({"},", "  title = {"}), 
-        i(3), 
-        t({"},", "  year = {"}), 
-        i(4), 
-        t({"},", "  url = {"}), 
-        i(5), 
-        t({"},", "}", "```"}),
-    }),
+  s("@inbook", fmt([[
+@inbook{{{},
+  author    = {{{}}},
+  title     = {{{}}},
+  booktitle = {{{}}},
+  date      = {{{}}},
+  publisher = {{{}}},
+  pages     = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5), i(6), i(7) })),
 
-    s("youtube", {
-        t({"```biblatex", "@online{"}), 
-        i(1, "key"), 
-        t({",", "  author = {"}), 
-        i(2), 
-        t({"},", "  title = {"}), 
-        i(3), 
-        t({"},", "  year = {"}), 
-        i(4), 
-        t({"},", "  url = {"}), 
-        i(5), 
-        t({"},", "  note = {YouTube}", "}", "```"}),
-    }),
+  s("@incollection", fmt([[
+@incollection{{{},
+  author    = {{{}}},
+  title     = {{{}}},
+  editor    = {{{}}},
+  booktitle = {{{}}},
+  date      = {{{}}},
+  publisher = {{{}}},
+  pages     = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4, "Last, First"), i(5), i(6), i(7), i(8) })),
 
-    s("law", {
-        t({"```biblatex", "@legislation{"}), 
-        i(1, "key"), 
-        t({",", "  title = {"}), 
-        i(2), 
-        t({"},", "  number = {"}), 
-        i(3, "Section/Code"), 
-        t({"},", "  year = {"}), 
-        i(4), 
-        t({"},", "}", "```"}),
-    }),
-    s("report", {
-        t({"```biblatex", "@report{"}), 
-        i(1, "key"), 
-        t({",", "  author = {"}), 
-        i(2), 
-        t({"},", "  title = {"}), 
-        i(3), 
-        t({"},", "  institution = {"}), 
-        i(4), 
-        t({"},", "  year = {"}), 
-        i(5), 
-        t({"},", "  type = {"}), 
-        i(6, "Working Paper"), 
-        t({"},", "}", "```"}),
-    }),
+  s("@inproceedings", fmt([[
+@inproceedings{{{},
+  author    = {{{}}},
+  title     = {{{}}},
+  booktitle = {{{}}},
+  date      = {{{}}},
+  publisher = {{{}}},
+  pages     = {{{}}},
+  doi       = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5), i(6), i(7), i(8) })),
+
+  s("@thesis", fmt([[
+@thesis{{{},
+  author      = {{{}}},
+  title       = {{{}}},
+  type        = {{{}}},
+  institution = {{{}}},
+  date        = {{{}}},
+  location    = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4, "phdthesis"), i(5), i(6), i(7) })),
+
+  s("@report", fmt([[
+@report{{{},
+  author      = {{{}}},
+  title       = {{{}}},
+  type        = {{{}}},
+  institution = {{{}}},
+  date        = {{{}}},
+  number      = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4, "techreport"), i(5), i(6), i(7) })),
+
+  s("@online", fmt([[
+@online{{{},
+  author  = {{{}}},
+  title   = {{{}}},
+  date    = {{{}}},
+  url     = {{{}}},
+  urldate = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5), i(6) })),
+
+  s("@misc", fmt([[
+@misc{{{},
+  author       = {{{}}},
+  title        = {{{}}},
+  date         = {{{}}},
+  howpublished = {{{}}},
+  note         = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5), i(6) })),
+
+  s("@collection", fmt([[
+@collection{{{},
+  editor    = {{{}}},
+  title     = {{{}}},
+  date      = {{{}}},
+  publisher = {{{}}},
+  location  = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5), i(6) })),
+
+  s("@unpublished", fmt([[
+@unpublished{{{},
+  author = {{{}}},
+  title  = {{{}}},
+  date   = {{{}}},
+  note   = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5) })),
+
+  s("@dataset", fmt([[
+@dataset{{{},
+  author    = {{{}}},
+  title     = {{{}}},
+  date      = {{{}}},
+  publisher = {{{}}},
+  doi       = {{{}}},
+  version   = {{{}}},
+}}
+]], { i(1, "key"), i(2, "Last, First"), i(3), i(4), i(5), i(6), i(7) }))
+
 })
+
