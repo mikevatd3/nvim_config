@@ -79,6 +79,7 @@ require("plugins.lualine")
 require("plugins.ts")
 require("plugins.treesj")
 require("plugins.telescope")
+require("plugins.vimtex")
 
 vim.g.loaded_python3_provider = 0
 
@@ -89,4 +90,49 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find f
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
-vim.keymap.set('n', '<leader>fB', ":Telescope bibtex<CR>", {})
+-- In filetypes with no citation syntax of their own (e.g. code docstrings),
+-- default <CR> to a short "Author (Year)" citation instead of a
+-- bare/formatted key. <C-c> gives the full "Author (Year), Title."
+-- citation everywhere (see plugins/telescope.lua).
+local bibtex_readable_fts = { python = true, julia = true }
+local bibtex_telescope_cfg = require('plugins.telescope')
+
+vim.keymap.set('n', '<leader>fB', function()
+  if bibtex_readable_fts[vim.bo.filetype] then
+    local group = vim.api.nvim_create_augroup('BibtexReadableDefault', { clear = true })
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = 'TelescopePrompt',
+      group = group,
+      once = true,
+      callback = function(args)
+        vim.keymap.set(
+          'i', '<CR>',
+          bibtex_telescope_cfg.insert_readable_citation(false),
+          { buffer = args.buf }
+        )
+      end,
+    })
+  end
+  vim.cmd('Telescope bibtex')
+end, {})
+
+
+-- Slime for Julia / R Pseudio
+vim.g.slime_dont_ask_default = true
+local window_id = tonumber(vim.env.SLIME_WINDOW_ID)
+local listen_on = vim.env.SLIME_SOCKET
+
+if window_id then
+  vim.g.slime_target = "kitty"
+  vim.g.slime_default_config = { window_id = window_id, listen_on = listen_on }
+end
+
+
+-- Wordnet
+local wn = require("plugins.wordnet")
+vim.keymap.set("n", "<leader>d", wn.lookup, { desc = "WordNet lookup" })
+vim.keymap.set("v", "<leader>d", wn.lookup_visual, { desc = "WordNet lookup (visual)" })
+
+-- Spelling suggestions in a floating window instead of the built-in z= prompt
+local spellsuggest = require("plugins.spellsuggest")
+vim.keymap.set("n", "z=", spellsuggest.suggest, { desc = "Spelling suggestions" })

@@ -1,40 +1,22 @@
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true }
 
--- This needs more configuration before it'll be usable
--- vim.lsp.config["harper_ls"] = {
---     settings = {
---         ["harper-ls"] = {
---             userDictPath = "~/.config/nvim/spell/en.utf-8.add",
---             linters = {
---                   SpellCheck = true,
---                   SpelledNumbers = false,
---                   AnA = true,
---                   SentenceCapitalization = true,
---                   UnclosedQuotes = true,
---                   WrongQuotes = false,
---                   LongSentences = true,
---                   RepeatedWords = true,
---                   Spaces = true,
---                   Matcher = true,
---                   CorrectNumberSuffix = true
---             },
---             codeActions = {
---                 ForceStable = false
---             },
---             markdown = {
---                 IgnoreLinkTitle = true
---             },
---             diagnosticSeverity = "hint",
---             isolateEnglish = false,
---             dialect = "American",
---             maxFileLength = 120000,
---             ignoredLintsPath = "",
---             excludePatterns = {"#+ [A-Za-z ]+"}
---         }
---     }
--- }
--- vim.lsp.enable("harper_ls")
+vim.api.nvim_create_user_command('Notes', function(opts)
+    local lines = vim.fn.line('$')
+    vim.wo.scrollbind = true
+    vim.cmd('rightbelow 60vsplit ' .. opts.args)
+    -- Set after the split: the markdown ftplugin re-runs for the new buffer
+    -- and would otherwise reset this to 80.
+    vim.bo.textwidth = 49
+    local missing = lines - vim.fn.line('$')
+    if missing > 0 then
+        local pad = {}
+        for i = 1, missing do pad[i] = '' end
+        vim.api.nvim_buf_set_lines(0, -1, -1, false, pad)
+    end
+    vim.wo.scrollbind = true
+    vim.cmd('syncbind')
+end, { nargs = 1, complete = 'file' })
 
 -- This will add .md to the file search
 vim.opt_local.suffixesadd:append(".md")

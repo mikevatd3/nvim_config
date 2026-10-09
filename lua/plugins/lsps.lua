@@ -21,9 +21,12 @@ vim.lsp.config["lua_ls"] = { -- For lua
 vim.lsp.config["pyright"] = {}
 vim.lsp.enable("pyright")
 
-vim.lsp.config["r_language_server"] = {}
+vim.lsp.config["r_language_server"] = { filetypes = { "r", "rmd" } }
 vim.lsp.enable("r_language_server")
 
 vim.lsp.config["julials"] = {}
 vim.lsp.enable("julials")
+
+vim.lsp.config["texlab"] = {}
+vim.lsp.enable("texlab")
 

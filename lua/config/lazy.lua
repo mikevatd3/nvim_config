@@ -26,8 +26,19 @@ require("lazy").setup({
   spec = {
 
   -- Treesitter
-  { "nvim-treesitter/nvim-treesitter" },
-  { "nvim-treesitter/nvim-treesitter-textobjects" },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    branch = "main",
+    build = ":TSUpdate",
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    branch = "main",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    init = function()
+      vim.g.no_plugin_maps = true
+    end,
+  },
   {
     'Wansmer/treesj',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
@@ -63,7 +74,6 @@ require("lazy").setup({
   { "nvim-lua/plenary.nvim" },
   {
     "nvim-telescope/telescope.nvim",
-    tag = "0.1.8",
     dependencies = { "nvim-lua/plenary.nvim" }
   },
 
@@ -91,6 +101,18 @@ require("lazy").setup({
       opts = {}
   },
 
+  -- Otter for LSP in embedded code blocks (e.g. python chunks in quarto/markdown)
+  {
+      "jmbuhr/otter.nvim",
+      dependencies = { "nvim-treesitter/nvim-treesitter" },
+      config = function()
+        require("plugins.otter")
+      end,
+  },
+
+  -- LaTeX: compilation, SyncTeX, TOC, motions/text-objects
+  { "lervag/vimtex", ft = { "tex" } },
+
   -- Appearance-related plugins
   { "tjdevries/colorbuddy.nvim" },
   { "sainnhe/everforest"},
@@ -109,6 +131,19 @@ require("lazy").setup({
       vim.g.slime_target = "kitty"
     end
   },
+
+-- Pi: minimal CLI agent integration
+{
+  "pablopunk/pi.nvim",
+  config = function()
+    require("plugins.pi")
+  end,
+  cmd = { "PiAsk", "PiAskSelection" },
+  keys = {
+    { "<leader>ai", "<cmd>PiAsk<cr>", desc = "Ask pi" },
+    { "<leader>ai", "<cmd>PiAskSelection<cr>", mode = "v", desc = "Ask pi (selection)" },
+  },
+},
 
 },
   -- Configure any other settings here. See the documentation for more details.

@@ -1,6 +1,7 @@
 require("luasnip.session.snippet_collection").clear_snippets("all")
 require("luasnip.session.snippet_collection").clear_snippets("python")
 require("luasnip.session.snippet_collection").clear_snippets("sql")
+require("luasnip.session.snippet_collection").clear_snippets("tex")
 
 local ls = require("luasnip")
 local extras = require("luasnip.extras")
@@ -234,6 +235,64 @@ WITH hexes AS (
             { cola = i(1), colb = rep(1), colc = rep(1), finish = i(0) }
         )
     ),
+})
+
+ls.add_snippets("tex", {
+    s("sec", fmta([[\section{<name>}]], { name = i(1) })),
+    s("ssec", fmta([[\subsection{<name>}]], { name = i(1) })),
+    s("sssec", fmta([[\subsubsection{<name>}]], { name = i(1) })),
+    s("item", { t("\\item "), i(0) }),
+    s("frac", fmta([[\frac{<num>}{<den>}]], { num = i(1), den = i(2) })),
+    s("sum", fmta([[\sum_{<lower>}^{<upper>}]], { lower = i(1), upper = i(2) })),
+    s("int", fmta([[\int_{<lower>}^{<upper>}]], { lower = i(1), upper = i(2) })),
+    s("beg", c(1, {
+        fmta([[
+\begin{itemize}
+    \item <first>
+\end{itemize}<finish>]], { first = i(1), finish = i(0) }),
+        fmta([[
+\begin{enumerate}
+    \item <first>
+\end{enumerate}<finish>]], { first = i(1), finish = i(0) }),
+        fmta([[
+\begin{equation}
+    <body>
+\end{equation}<finish>]], { body = i(1), finish = i(0) }),
+        fmta([[
+\begin{align}
+    <body>
+\end{align}<finish>]], { body = i(1), finish = i(0) }),
+        fmta([[
+\begin{figure}[<placement>]
+    \centering
+    \includegraphics[width=<width>\textwidth]{<path>}
+    \caption{<caption>}
+    \label{fig:<label>}
+\end{figure}<finish>]], {
+            placement = i(1, "htbp"),
+            width = i(2, "0.8"),
+            path = i(3),
+            caption = i(4),
+            label = i(5),
+            finish = i(0),
+        }),
+        fmta([[
+\begin{table}[<placement>]
+    \centering
+    \begin{tabular}{<cols>}
+        <body>
+    \end{tabular}
+    \caption{<caption>}
+    \label{tab:<label>}
+\end{table}<finish>]], {
+            placement = i(1, "htbp"),
+            cols = i(2, "c c"),
+            body = i(3),
+            caption = i(4),
+            label = i(5),
+            finish = i(0),
+        }),
+    })),
 })
 
 ls.add_snippets("bib", {
